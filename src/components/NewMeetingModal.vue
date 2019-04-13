@@ -12,7 +12,12 @@
 
           <div class="modal-body">
             <slot name="body">
-              default body
+              <multiselect 
+                v-model="selected" 
+                :options="options" 
+                @select="updateSelected"
+              >
+              </multiselect>
             </slot>
           </div>
 
@@ -32,14 +37,26 @@
 
 
 <script>
+import Multiselect from 'vue-multiselect'
+
 export default {
   name: 'NewMeetingModal',
+  components: {
+    Multiselect
+  },
   props: {
   },
+  data: () => ({
+    selected: null,
+    options: ['Aleksiy', 'Winson', 'Shay', 'Ireti', 'Elaine'],
+  }),
   methods: {
     close() {
       this.$emit('close');
     },
+    updateSelected (newSelected) {
+      this.selected = newSelected
+    }
 
   }
 }

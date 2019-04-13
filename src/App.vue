@@ -27,11 +27,9 @@ export default {
     Schedule,
     NewMeetingModal
   },
-  data () {
-    return {
+  data: () => ({
       isNewMeetingModalVisibile: false,
-    };
-  },
+  }),
   methods: {
     openNewMeetingModal() {
       this.isNewMeetingModalVisibile = true;

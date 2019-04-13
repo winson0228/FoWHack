@@ -1,6 +1,6 @@
 <template>
     <calendar 
-        isReadOnly="true"
+        :isReadOnly="true"
         style="height: 800px;"/>
 </template>
 
