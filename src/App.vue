@@ -1,6 +1,9 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
+    <OnboardingModal 
+      v-show="isOnboarded"
+      @close="onboardUser"/>
     <NewMeetingModal
       v-show="isNewMeetingModalVisibile"
       @close="closeNewMeetingModal"
@@ -19,17 +22,21 @@
 <script>
 import Schedule from './components/Schedule.vue'
 import NewMeetingModal from './components/NewMeetingModal.vue'
+import OnboardingModal from './components/OnboardingModal.vue'
 
 
 export default {
   name: 'app',
   components: {
     Schedule,
-    NewMeetingModal
+    NewMeetingModal,
+    OnboardingModal
   },
   data () {
     return {
       isNewMeetingModalVisibile: false,
+      isOnboardingModalVisible: false,
+      isOnboarded: false
     };
   },
   methods: {
@@ -38,6 +45,9 @@ export default {
     }, 
     closeNewMeetingModal() {
       this.isNewMeetingModalVisibile = false;
+    },
+    onboardUser() {
+      this.isOnboarded = true;
     }
   }
 }
