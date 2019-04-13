@@ -2,7 +2,7 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <OnboardingModal 
-      v-show="isOnboarded"
+      v-show="!isOnboarded"
       @close="onboardUser"/>
     <NewMeetingModal
       v-show="isNewMeetingModalVisibile"

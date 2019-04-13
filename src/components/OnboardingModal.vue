@@ -6,19 +6,22 @@
 
           <div class="modal-header">
             <slot name="header">
-              default header
+              Perferences
             </slot>
           </div>
 
           <div class="modal-body">
-            <slot name="body">
-              default body
-            </slot>
+            <ul>
+              <li>Select your time zone and working hours.</li>
+              <li>Would you like your meetings to be clustered together or buffered? </li>
+              <li>What would be the day(s) that you would want to avoid having meetings?</li>
+              <li>What would be the day(s) that you are most likely available for meetings?</li>
+              <li>Do you prefer your meetings in the morning or afternoon?</li>
+            </ul>
           </div>
 
           <div class="modal-footer">
             <slot name="footer">
-              default footer
               <button class="modal-default-button" @click="$emit('close')">
                 OK
               </button>
@@ -71,6 +74,7 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
   font-family: Helvetica, Arial, sans-serif;
+  text-align: left !important;
 }
 
 .modal-header h3 {
