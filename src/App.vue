@@ -32,13 +32,11 @@ export default {
     NewMeetingModal,
     OnboardingModal
   },
-  data () {
-    return {
+  data: () => ({
       isNewMeetingModalVisibile: false,
       isOnboardingModalVisible: false,
       isOnboarded: false
-    };
-  },
+  }),
   methods: {
     openNewMeetingModal() {
       this.isNewMeetingModalVisibile = true;
