@@ -1,5 +1,7 @@
 <template>
-    <calendar style="height: 800px;"/>
+    <calendar 
+        isReadOnly="true"
+        style="height: 800px;"/>
 </template>
 
 <script>
