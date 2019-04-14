@@ -92,9 +92,11 @@ export default {
   }),
   mounted() {
     this.events = store.getters.events;
-    //    store.watch((state) => state.events, ([val, obs]) => {
-    //        this.events = val;
-    //    });
+       store.watch((state) => state.events, ([val, obs]) => {
+        //    this.events = val;
+        console.log(val);
+            this.optimize();
+       });
     store.watch(
       () => store.getters.events,
       val => {
@@ -152,7 +154,7 @@ export default {
             let workMins = Moment.duration(
               new Moment(event.start).diff(endTime)
             ).asMinutes();
-            if (workMins > 60) {
+            if (workMins > 90) {
               results.effectiveMins += workMins;
             } else {
               results.wastedMins += workMins;
@@ -197,7 +199,7 @@ export default {
         bins[key].push(event);
       });
 
-      let interval = 10;
+      let interval = 5;
       for (let key of Object.keys(bins)) {
           let preschedule = bins[key].filter(event => !event.rangeStart);
           let schedule = bins[key].filter(event => !!event.rangeStart);
