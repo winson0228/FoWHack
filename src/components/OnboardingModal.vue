@@ -5,70 +5,97 @@
       <div class="modal-wrapper">
         <div class="modal-container flex-row">
           <div class="modal-header">
-            <h2 name="header">Preferences</h2>
+            <h2 name="header">Let’s get you set up</h2>
           </div>
           <div class="modal-body">
             <md-steppers v-if="!completedPreferences" :md-active-step.sync="active" md-linear>
               <md-step id="first" :md-done.sync="first">
                 <div class="item-spacing">
-                  Let’s get you set up.
-                  <p>We’ll ask for some quick questions so we can ensure we are scheduling meetings at a time that makes you the most productive you can be.</p>
+                  <h3>
+                    <p>We’ll ask for some quick questions so we can ensure we are scheduling meetings at a time that makes you the most productive you can be.</p>
+                  </h3>
+                  <div class="text-align-right">
+                    <img src="../assets/undraw_booking_33fn.png" class="bg-illustrations">
+                  </div>
                 </div>
-                <md-button class="md-raised md-primary" @click="setDone('first', 'second')">Continue</md-button>
+                <md-button
+                  class="md-raised md-primary md-button-right flex-justify-end"
+                  @click="setDone('first', 'second')"
+                >Continue</md-button>
               </md-step>
               <md-step id="second" :md-done.sync="second">
                 <div class="item-spacing">
-                  <h4>What are your core working hours?</h4>
+                  <h3>What are your core working hours?</h3>
                   <el-time-select
                     placeholder="Start time"
-                    v-model="startTime"
+                    v-model="event.workingHoursStart"
                     :picker-options="{
-      step: '00:15'
+                      start: '00:00',
+      end: '23:30',
     }"
                   ></el-time-select>
-                  <el-time-select
-                    placeholder="End time"
-                    v-model="endTime"
-                    :picker-options="{
-      step: '00:15',
+                  <p>
+                    <el-time-select
+                      placeholder="End time"
+                      v-model="event.workingHoursEnd"
+                      :picker-options="{
+                        start: '00:00',
+      end: '23:30',
       minTime: startTime
     }"
-                  ></el-time-select>
-                                    We’ll avoid scheduling meetings outside of these hours altogether.
-
+                    ></el-time-select>
+                  </p>
+                  <p>We’ll avoid scheduling meetings outside of these hours altogether.</p>
+                  <div class="text-align-right">
+                    <img src="../assets/undraw_schedule_pnbk.png" class="bg-illustrations">
+                  </div>
                 </div>
-                <md-button class="md-raised md-primary" @click="setDone('second', 'third')">Continue</md-button>
+                <md-button
+                  class="md-raised md-primary flex-justify-end"
+                  @click="setDone('second', 'third')"
+                >Continue</md-button>
               </md-step>
               <md-step id="third" :md-done.sync="third">
                 <div class="item-spacing">
-                  <h4>Do you prefer to cluster your meetings together, or spread them out over the week?</h4>
-                  <md-radio v-model="radio" name="onboardPrefClustered" value="clustered">Clustered</md-radio>
-                  <md-radio v-model="radio" name="onboardPrefBuffered" value="buffered">Buffered</md-radio>
-                  <div v-if="radio === 'buffered'">
+                  <h3>Do you prefer to cluster your meetings together, or spread them out over the week?</h3>
+                  <md-radio
+                    v-model="event.buffering"
+                    name="onboardPrefClustered"
+                    value="clustered"
+                  >Clustered</md-radio>
+                  <md-radio
+                    v-model="event.buffering"
+                    name="onboardPrefBuffered"
+                    value="buffered"
+                  >Buffered</md-radio>
+                  <div v-if="event.buffering === 'buffered'">
                     <md-field>
                       <label>Minute Intervals</label>
-                      <md-select v-model="bufferedIntervals">
-                        How would you like to space out between your meetings? 
-                        <md-option value="15">15 Min</md-option>
-                        <md-option value="30">30 Min</md-option>
-                        <md-option value="45">45 Min</md-option>
-                        <md-option value="60">1 Hr</md-option>
-                        <md-option value="75">1 Hr 15 Min</md-option>
-                        <md-option value="90">1 Hr 30 Min</md-option>
-                        <md-option value="105">1 Hr 45 Min</md-option>
-                        <md-option value="120">2 Hr</md-option>
+                      <md-select v-model="event.bufferInterval">
+                        <md-option value="15">15 Minutes</md-option>
+                        <md-option value="30">30 Minutes</md-option>
+                        <md-option value="45">45 Minutes</md-option>
+                        <md-option value="60">1 Hour</md-option>
+                        <md-option value="75">1 Hour 15 Minutes</md-option>
+                        <md-option value="90">1 Hour 30 Minutes</md-option>
+                        <md-option value="105">1 Hour 45 Minutes</md-option>
+                        <md-option value="120">2 Hours</md-option>
                       </md-select>
                     </md-field>
+                    <p>How would you like to space out between your meetings?</p>
+                  </div>
+                  <div class="text-align-right">
+                    <img src="../assets/undraw_preferences_uuo2.png" class="bg-illustrations">
                   </div>
                 </div>
                 <md-button class="md-raised md-primary" @click="setDone('third', 'forth')">Continue</md-button>
               </md-step>
               <md-step id="forth" :md-done.sync="forth">
                 <div class="item-spacing">
-                  <h4>What days of the week are you most available for meetings?</h4>
+                  <h3>What days of the week are you most available for meetings?</h3>
                   <md-field>
                     <label>Select your day...</label>
-                    <md-select v-model="selectedPreferredDay" multiple>
+                    <md-select v-model="event.selectedPreferredDays" multiple>
                       <md-option value="1">Monday</md-option>
                       <md-option value="2">Tuesday</md-option>
                       <md-option value="3">Wednesday</md-option>
@@ -77,17 +104,20 @@
                       <md-option value="6">Saturday</md-option>
                       <md-option value="7">Sunday</md-option>
                     </md-select>
-                    We’ll try our best to schedule  meetings in these days for you. 
                   </md-field>
+                  <p>We’ll try our best to schedule meetings in these days for you.</p>
+                  <div class="text-align-right">
+                    <img src="../assets/undraw_digital_nomad_9kgl.png" class="bg-illustrations">
+                  </div>
                 </div>
                 <md-button class="md-raised md-primary" @click="setDone('forth', 'fifth')">Continue</md-button>
               </md-step>
               <md-step id="fifth" :md-done.sync="fifth">
                 <div class="item-spacing">
-                  <h4>What days are you the least available for meetings?</h4>
+                  <h3>What days are you the least available for meetings?</h3>
                   <md-field>
                     <label>Select your day...</label>
-                    <md-select v-model="selectedAvoidDay" multiple>
+                    <md-select v-model="event.selectedAvoidDays" multiple>
                       <md-option value="1">Monday</md-option>
                       <md-option value="2">Tuesday</md-option>
                       <md-option value="3">Wednesday</md-option>
@@ -96,31 +126,45 @@
                       <md-option value="6">Saturday</md-option>
                       <md-option value="7">Sunday</md-option>
                     </md-select>
-                    We’ll try our best to avoid scheduling meetings in these days for you.
                   </md-field>
+                  <p>We’ll try our best to avoid scheduling meetings in these days for you.</p>
+                  <div class="text-align-right">
+                    <img src="../assets/undraw_organize_resume_utk5.png" class="bg-illustrations">
+                  </div>
                 </div>
                 <md-button class="md-raised md-primary" @click="setDone('fifth', 'sixth')">Continue</md-button>
               </md-step>
               <md-step id="sixth" :md-done.sync="sixth">
                 <div class="item-spacing" required>
-                  <h4>Do you have a preference if your meetings are in the morning, or afternoon?</h4>
+                  <h3>Do you have a preference if your meetings are in the morning, or afternoon?</h3>
                   <md-radio
-                    v-model="radio"
+                    v-model="event.onboardSelectedAMPM"
                     name="onboardPrefMorningAfternoon"
-                    value="morning"
+                    value="am"
                   >Morning</md-radio>
                   <md-radio
-                    v-model="radio"
+                    v-model="event.onboardSelectedAMPM"
                     name="onboardPrefMorningAfternoon"
-                    value="afternoon"
+                    value="pm"
                   >Afternoon</md-radio>
+                  <div class="text-align-right">
+                    <img
+                      src="../assets/undraw_morning_essentials_9fw8.png"
+                      class="bg-illustrations"
+                    >
+                  </div>
                 </div>
                 <md-button class="md-raised md-primary" @click="setComplete()">Done</md-button>
               </md-step>
             </md-steppers>
           </div>
-          <div v-if="completedPreferences" class="modal-footer">
-            <md-button class="md-dense md-raised md-primary margin-reset" @click="$emit('close')">OK</md-button>
+          <div v-if="completedPreferences" class="item-spacing modal-footer">
+            <h2>Thanks!</h2>
+            <h3>We'll schedule meetings based on your preferences.</h3>
+            <md-button
+              class="md-dense md-raised md-primary margin-reset"
+              @click="$emit('close')"
+            >Done</md-button>
           </div>
         </div>
       </div>
@@ -132,6 +176,7 @@
 <script>
 import Vue from "vue";
 import elementUI from "element-ui";
+import store from "../store";
 Vue.use(elementUI);
 
 export default {
@@ -139,17 +184,29 @@ export default {
   props: {},
   methods: {
     close() {
+      this.event = {
+        workingHoursStart: "",
+        workingHoursEnd: "",
+        buffering: "",
+        bufferInterval: 0,
+        selectedPreferredDays: [],
+        selectedAvoidDays: [],
+        onboardSelectedAMPM: ""
+      };
       this.$emit("close");
     },
     setDone(id, index) {
       this[id] = true;
-      
+
       if (index) {
         this.active = index;
       }
     },
     setComplete() {
       this.completedPreferences = true;
+    },
+    setError() {
+      this.stepError = "Please fill in the required fields";
     }
   },
   data: () => ({
@@ -174,10 +231,20 @@ export default {
     third: false,
     forth: false,
     fifth: false,
-    sixth: false
+    sixth: false,
+    event: {
+      workingHoursStart: "",
+      workingHoursEnd: "",
+      buffering: "",
+      bufferInterval: 0,
+      selectedPreferredDays: [],
+      selectedAvoidDays: [],
+      onboardSelectedAMPM: ""
+    },
+    stepError: null
   }),
   computed: {
-    onboardAvoidDay: {
+    selectedAvoidDays: {
       get() {
         return this.$material.locale.onboardAvoidDay;
       },
@@ -185,7 +252,7 @@ export default {
         this.$material.locale.onboardAvoidDay = val;
       }
     },
-    onboardPreferredDay: {
+    selectedPreferredDays: {
       get() {
         return this.$material.locale.onboardPreferredDay;
       },
@@ -193,12 +260,12 @@ export default {
         this.$material.locale.onboardPreferredDay = val;
       }
     },
-    bufferedIntervals: {
+    bufferInterval: {
       get() {
-        return this.$material.locale.bufferedIntervals;
+        return this.$material.locale.bufferInterval;
       },
       set(val) {
-        this.$material.locale.bufferedIntervals = val;
+        this.$material.locale.bufferInterval = val;
       }
     }
   }
@@ -226,7 +293,7 @@ export default {
 }
 
 .modal-container {
-  width: 560px;
+  width: 600px;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
@@ -234,7 +301,8 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
   font-family: Helvetica, Arial, sans-serif;
-  text-align: left !important;
+  text-align: left;
+  flex-grow: 1;
 }
 
 .modal-header h3 {
@@ -243,7 +311,7 @@ export default {
 }
 
 .modal-body {
-  margin: 24px 0;
+  margin-top: 24px;
 }
 
 .modal-footer {
@@ -259,8 +327,29 @@ export default {
 }
 
 .item-spacing {
-  margin-top: 16px;
-  margin-bottom: 16px;
+  margin: 64px 0px;
+}
+
+.bg-illustrations {
+  height: 70%;
+  width: 70%;
+}
+
+.pos-relative {
+  position: relative;
+}
+
+.pos-absolute {
+  position: absolute;
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+.icon-size {
+  height: 16px;
+  width: 16px;
 }
 
 /*
@@ -284,5 +373,14 @@ export default {
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+.mat-horizontal-stepper-header .mat-step-icon,
+.mat-horizontal-stepper-header .mat-step-icon-not-touched {
+  margin-top: 24px;
+  margin-right: 0 !important;
+}
+.mat-step-label {
+  margin-top: 16px;
+  width: 100%;
 }
 </style>
