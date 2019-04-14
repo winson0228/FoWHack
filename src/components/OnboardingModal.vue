@@ -14,14 +14,16 @@
                   <h3>
                     <p>We’ll ask for some quick questions so we can ensure we are scheduling meetings at a time that makes you the most productive you can be.</p>
                   </h3>
-                  <div class="text-align-right">
-                    <img src="../assets/undraw_booking_33fn.png" class="bg-illustrations">
+                  <div>
+                    <div class="text-align-left pos-relative">
+                      <img src="../assets/undraw_booking_33fn.png" class="bg-illustrations">
+                      <md-button
+                        class="md-raised md-primary md-button-right flex-justify-end img-position pos-absolute"
+                        @click="setDone('first', 'second')"
+                      >Continue</md-button>
+                    </div>
                   </div>
                 </div>
-                <md-button
-                  class="md-raised md-primary md-button-right flex-justify-end"
-                  @click="setDone('first', 'second')"
-                >Continue</md-button>
               </md-step>
               <md-step id="second" :md-done.sync="second">
                 <div class="item-spacing">
@@ -46,18 +48,18 @@
                     ></el-time-select>
                   </p>
                   <p>We’ll avoid scheduling meetings outside of these hours altogether.</p>
-                  <div class="text-align-right">
+                  <div class="text-align-left pos-relative">
                     <img src="../assets/undraw_schedule_pnbk.png" class="bg-illustrations">
+                    <md-button
+                    class="md-raised md-primary flex-justify-end img-position pos-absolute"
+                    @click="setDone('second', 'third')"
+                  >Continue</md-button>
                   </div>
                 </div>
-                <md-button
-                  class="md-raised md-primary flex-justify-end"
-                  @click="setDone('second', 'third')"
-                >Continue</md-button>
               </md-step>
               <md-step id="third" :md-done.sync="third">
                 <div class="item-spacing">
-                  <h3>Do you prefer to cluster your meetings together, or spread them out over the week?</h3>
+                  <h3>Do you prefer to group your meetings together on a specific day, or spread them out over the week?</h3>
                   <md-radio
                     v-model="event.buffering"
                     name="onboardPrefClustered"
@@ -84,11 +86,14 @@
                     </md-field>
                     <p>How would you like to space out between your meetings?</p>
                   </div>
-                  <div class="text-align-right">
+                  <div class="text-align-left pos-relative">
                     <img src="../assets/undraw_preferences_uuo2.png" class="bg-illustrations">
+                    <md-button
+                    class="md-raised md-primary img-position pos-absolute"
+                    @click="setDone('third', 'forth')"
+                  >Continue</md-button>
                   </div>
                 </div>
-                <md-button class="md-raised md-primary" @click="setDone('third', 'forth')">Continue</md-button>
               </md-step>
               <md-step id="forth" :md-done.sync="forth">
                 <div class="item-spacing">
@@ -106,11 +111,14 @@
                     </md-select>
                   </md-field>
                   <p>We’ll try our best to schedule meetings in these days for you.</p>
-                  <div class="text-align-right">
+                   <div class="text-align-left pos-relative">
                     <img src="../assets/undraw_digital_nomad_9kgl.png" class="bg-illustrations">
+                    <md-button
+                    class="md-raised md-primary img-position pos-absolute"
+                    @click="setDone('forth', 'fifth')"
+                  >Continue</md-button>
                   </div>
                 </div>
-                <md-button class="md-raised md-primary" @click="setDone('forth', 'fifth')">Continue</md-button>
               </md-step>
               <md-step id="fifth" :md-done.sync="fifth">
                 <div class="item-spacing">
@@ -128,11 +136,14 @@
                     </md-select>
                   </md-field>
                   <p>We’ll try our best to avoid scheduling meetings in these days for you.</p>
-                  <div class="text-align-right">
+                  <div class="text-align-left pos-relative">
                     <img src="../assets/undraw_organize_resume_utk5.png" class="bg-illustrations">
+                    <md-button
+                    class="md-raised md-primary img-position pos-absolute"
+                    @click="setDone('fifth', 'sixth')"
+                  >Continue</md-button>
                   </div>
                 </div>
-                <md-button class="md-raised md-primary" @click="setDone('fifth', 'sixth')">Continue</md-button>
               </md-step>
               <md-step id="sixth" :md-done.sync="sixth">
                 <div class="item-spacing" required>
@@ -147,24 +158,29 @@
                     name="onboardPrefMorningAfternoon"
                     value="pm"
                   >Afternoon</md-radio>
-                  <div class="text-align-right">
+                  <div class="text-align-left pos-relative">
                     <img
                       src="../assets/undraw_morning_essentials_9fw8.png"
                       class="bg-illustrations"
                     >
+                    <md-button class="md-raised md-primary img-position pos-absolute" @click="setComplete()">Continue</md-button>
                   </div>
                 </div>
-                <md-button class="md-raised md-primary" @click="setComplete()">Done</md-button>
               </md-step>
             </md-steppers>
           </div>
           <div v-if="completedPreferences" class="item-spacing modal-footer">
             <h2>Thanks!</h2>
+            <div class="text-align-center">
+              <img src="../assets/undraw_order_confirmed_1m3v.png" class="bg-illustrations">
+            </div>
             <h3>We'll schedule meetings based on your preferences.</h3>
-            <md-button
-              class="md-dense md-raised md-primary margin-reset"
-              @click="$emit('close')"
-            >Done</md-button>
+            <div class="text-align-right">
+              <md-button
+                class="md-dense md-raised md-primary margin-reset"
+                @click="$emit('close')"
+              >Done</md-button>
+            </div>
           </div>
         </div>
       </div>
@@ -177,6 +193,7 @@
 import Vue from "vue";
 import elementUI from "element-ui";
 import store from "../store";
+
 Vue.use(elementUI);
 
 export default {
@@ -274,6 +291,7 @@ export default {
 
 <style scoped>
 @import url("//unpkg.com/element-ui@2.7.2/lib/theme-chalk/index.css");
+@import url("//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons");
 
 .modal-mask {
   position: fixed;
@@ -327,7 +345,8 @@ export default {
 }
 
 .item-spacing {
-  margin: 64px 0px;
+  /* margin: 64px 0px; */
+  margin-top: 64px;
 }
 
 .bg-illustrations {
@@ -347,6 +366,14 @@ export default {
   text-align: right;
 }
 
+.text-align-left {
+  text-align: left;
+}
+
+.img-position {
+  right: 0px;
+  bottom: 0px;
+}
 .icon-size {
   height: 16px;
   width: 16px;
