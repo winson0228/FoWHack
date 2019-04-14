@@ -3,12 +3,9 @@
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
-
           <div class="modal-header">
             <slot name="header">
-              <h2>
-                Schedule a New Meeting
-              </h2>
+              <h2>Schedule a New Meeting</h2>
             </slot>
           </div>
 
@@ -23,27 +20,27 @@
                 <label>Description</label>
                 <md-textarea v-model="event.content"></md-textarea>
               </md-field>
-              
+
               <md-field>
                 <label>Duration</label>
-                <md-select v-model="event.duration">
-                  <md-option value="15">15 Min</md-option>
-                  <md-option value="30">30 Min</md-option>
-                  <md-option value="45">45 Min</md-option>
-                  <md-option value="60">1 Hr</md-option>
-                  <md-option value="75">1 Hr 15 Min</md-option>
-                  <md-option value="90">1 Hr 30 Min</md-option>
-                  <md-option value="105">1 Hr 45 Min</md-option>
-                  <md-option value="120">2 Hr</md-option>
+                <md-select v-model="event.duration" v-on:md-selected="calcCost">
+                  <md-option :value="15">15 Min</md-option>
+                  <md-option :value="30">30 Min</md-option>
+                  <md-option :value="45">45 Min</md-option>
+                  <md-option :value="60">1 Hr</md-option>
+                  <md-option :value="75">1 Hr 15 Min</md-option>
+                  <md-option :value="90">1 Hr 30 Min</md-option>
+                  <md-option :value="105">1 Hr 45 Min</md-option>
+                  <md-option :value="120">2 Hr</md-option>
                 </md-select>
               </md-field>
 
               <md-field>
                 <label>Priority</label>
                 <md-select v-model="event.priority">
-                  <md-option value="1">Normal</md-option>
-                  <md-option value="2">Important</md-option>
-                  <md-option value="3">Nuclear</md-option>
+                  <md-option :value="1">Normal</md-option>
+                  <md-option :value="2">Important</md-option>
+                  <md-option :value="3">Nuclear</md-option>
                 </md-select>
               </md-field>
 
@@ -56,8 +53,8 @@
 
               <md-field>
                 <multiselect
-                  v-model="selectedPeople" 
-                  :options="peopleOptions" 
+                  v-model="selectedPeople"
+                  :options="peopleOptions"
                   :multiple="true"
                   :searchable="true"
                   :clear-on-select="true"
@@ -65,11 +62,12 @@
                   :show-no-results="false"
                   placeholder="Add people to your meeting..."
                   :hide-selected="true"
-                >
-                </multiselect>
+                  @select="addCost"
+                  @remove="removeCost"
+                ></multiselect>
               </md-field>
 
-            <!-- <md-field>
+              <!-- <md-field>
               <div>
                 <md-chips v-model="selectedPeople"></md-chips>
               </div>
@@ -79,21 +77,19 @@
               >
               <label>Add people to your meeting...</label>
               </md-autocomplete>
-            </md-field> -->
-
+              </md-field>-->
             </slot>
           </div>
 
-          <md-progress-bar md-mode="buffer" :md-value="currentPercent" :md-buffer="maxPercent"></md-progress-bar>
+          <div class="man-indicator">
+            <div class="man-words">This meeting will cost a total of {{manHoursMessage}}</div>
+            <md-progress-bar md-mode="determinate" :md-value="currentPercent"></md-progress-bar>
+          </div>
 
           <div class="modal-footer">
             <slot name="footer">
-              <md-button class="md-dense md-raised md-primary margin-reset" @click="close">
-                Cancel
-              </md-button>
-              <md-button class="md-dense md-raised md-primary margin-reset" @click="save">
-                OK
-              </md-button>
+              <md-button class="md-dense md-raised md-primary margin-reset" @click="close">Cancel</md-button>
+              <md-button class="md-dense md-raised md-primary margin-reset" @click="save">OK</md-button>
             </slot>
           </div>
         </div>
@@ -104,31 +100,39 @@
 
 
 <script>
-import Multiselect from 'vue-multiselect'
-import store from '../store'
+import Multiselect from "vue-multiselect";
+import store from "../store";
+import Moment from 'moment';
 
 export default {
-  name: 'NewMeetingModal',
+  name: "NewMeetingModal",
   components: {
     Multiselect
   },
-  props: {
-  },
+  props: {},
   data: () => ({
     maxPercent: 0,
     currentPercent: 0,
-    maxVal: 10,
     selectedPeople: [],
-    peopleOptions: ['Aleksiy', 'Winson', 'Shay', 'Ireti', 'Elaine'],
+    countSelected: 0,
+    manMinutes: 0,
+    manHoursMessage: "",
+    peopleOptions: ["Aleksiy", "Winson", "Shay", "Ireti", "Elaine"],
     event: {
       rangeEnd: "",
       rangeStart: "",
-      contention: "",
+      content: "",
       duration: 0,
       priority: 0,
       title: "",
+      // TODO: replace
+      start: "2019-04-16",
+      end: "2019-04-16"
     }
- }),
+  }),
+  mounted() {
+    this.calcCost();
+  },
   methods: {
     save() {
       this.addEvent();
@@ -138,29 +142,42 @@ export default {
       this.event = {
         rangeEnd: "",
         rangeStart: "",
-        contention: "",
+        content: "",
         duration: 0,
         priority: 0,
-        title: "",
+        title: ""
       };
-      this.$emit('close');
-
+      this.$emit("close");
     },
-    calcPercent() {
-      this.currentPercent = peopleOptions.length / maxVal;
-      this.maxPercent = Math.max(this.currentPercent, this.maxPercent);
+    addCost() {
+      this.countSelected++;
+      this.calcCost();
     },
-    selectPerson(person) {
-      this.selectedPeople.push(person);
+    removeCost() {
+      this.countSelected--;
+      this.calcCost();
+    },
+    calcCost() {
+      this.manMinutes = this.countSelected * this.event.duration
+      this.currentPercent = this.manMinutes / (10 * 60) * 100;
+      this.manHoursMessage = Moment.duration(this.manMinutes, 'minutes').humanize();
     },
     addEvent() {
-      store.commit('addEvent', this.event);
+      store.commit("addEvent", this.event);
     }
   }
-}
+};
 </script>
 
 <style scoped>
+.man-indicator {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.man-words {
+  margin-bottom: 12px;
+}
 
 .modal-mask {
   position: fixed;
@@ -169,9 +186,9 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: table;
-  transition: opacity .3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .modal-wrapper {
@@ -185,8 +202,8 @@ export default {
   padding: 20px 30px;
   background-color: #fff;
   border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
-  transition: all .3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  transition: all 0.3s ease;
   font-family: Helvetica, Arial, sans-serif;
   text-align: left !important;
 }

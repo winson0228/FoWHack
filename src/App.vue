@@ -1,18 +1,29 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <OnboardingModal 
-      v-show="!isOnboarded"
-      @close="onboardUser"/>
-    <NewMeetingModal
-      v-show="isNewMeetingModalVisibile"
-      @close="closeNewMeetingModal"
-    />
+    <md-app>
+      <md-app-toolbar class="md-primary">
+        <span class="md-title">Meeter</span>
+          <span class="fill-space"></span>
+         <md-button class="md-dense md-raised md-primary margin-reset"  @click="openNewMeetingModal">
+          New Meeting
+        </md-button>
+      </md-app-toolbar>
 
-    <md-button class="align-right md-dense md-raised md-primary margin-reset"  @click="openNewMeetingModal">
-      New Meeting
-    </md-button>
-    <Schedule/>
+      <md-app-content>
+        <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
+        <OnboardingModal 
+          v-show="!isOnboarded"
+          @close="onboardUser"/>
+        <NewMeetingModal
+          v-show="isNewMeetingModalVisibile"
+          @close="closeNewMeetingModal"
+        />
+        <div class="schedule">  
+          <Schedule/>
+        </div>
+    
+        </md-app-content>
+    </md-app>
   </div>
 </template>
 
@@ -51,10 +62,9 @@ export default {
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style>
-.align-right {
-  text-align: right;
+.fill-space {
+  flex: 1 1 auto;
 }
-
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -62,6 +72,22 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
+
+.multiselect__tags {
+  border: none;
+}
+
+.multiselect__tag {
+  background: #448aff;
+}
+
+.multiselect__option--highlight {
+  background: #448aff;
+}
+
+.multiselect__option--highlight:after {
+  background: #448aff;
+}
+
 </style>
