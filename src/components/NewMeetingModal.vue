@@ -16,17 +16,17 @@
             <slot name="body">
               <md-field>
                 <label>Title</label>
-                <md-input v-model="title"></md-input>
+                <md-input v-model="event.title"></md-input>
               </md-field>
 
               <md-field>
                 <label>Description</label>
-                <md-textarea v-model="content"></md-textarea>
+                <md-textarea v-model="event.content"></md-textarea>
               </md-field>
               
               <md-field>
                 <label>Duration</label>
-                <md-select v-model="duration">
+                <md-select v-model="event.duration">
                   <md-option value="15">15 Min</md-option>
                   <md-option value="30">30 Min</md-option>
                   <md-option value="45">45 Min</md-option>
@@ -40,17 +40,17 @@
 
               <md-field>
                 <label>Priority</label>
-                <md-select v-model="priority">
+                <md-select v-model="event.priority">
                   <md-option value="1">Normal</md-option>
                   <md-option value="2">Important</md-option>
                   <md-option value="3">Nuclear</md-option>
                 </md-select>
               </md-field>
 
-              <md-datepicker v-model="rangeStart">
+              <md-datepicker v-model="event.rangeStart">
                 <label>Schedule Range Start</label>
               </md-datepicker>
-              <md-datepicker v-model="rangeEnd">
+              <md-datepicker v-model="event.rangeEnd">
                 <label>Schedule Range End</label>
               </md-datepicker>
 
@@ -86,7 +86,7 @@
 
           <div class="modal-footer">
             <slot name="footer">
-              <md-button class="md-dense md-raised md-primary margin-reset" @click="$emit('close')">
+              <md-button class="md-dense md-raised md-primary margin-reset" @click="save">
                 OK
               </md-button>
             </slot>
@@ -100,7 +100,7 @@
 
 <script>
 import Multiselect from 'vue-multiselect'
-import store from '../store.js'
+import store from '../store'
 
 export default {
   name: 'NewMeetingModal',
@@ -112,7 +112,7 @@ export default {
   data: () => ({
     selectedPeople: [],
     peopleOptions: ['Aleksiy', 'Winson', 'Shay', 'Ireti', 'Elaine'],
-    event = {
+    event: {
       rangeEnd: "",
       rangeStart: "",
       contention: "",
@@ -122,14 +122,27 @@ export default {
     }
  }),
   methods: {
+    save() {
+      this.addEvent();
+      this.close();
+    },
     close() {
+      this.event = {
+        rangeEnd: "",
+        rangeStart: "",
+        contention: "",
+        duration: 0,
+        priority: 0,
+        title: "",
+      };
       this.$emit('close');
+
     },
     selectPerson(person) {
       this.selectedPeople.push(person);
     },
     addEvent() {
-      // this.store = 
+      store.commit('addEvent', this.event);
     }
   }
 }
