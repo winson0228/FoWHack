@@ -26,24 +26,24 @@
               
               <md-field>
                 <label>Duration</label>
-                <md-select v-model="event.duration">
-                  <md-option value="15">15 Min</md-option>
-                  <md-option value="30">30 Min</md-option>
-                  <md-option value="45">45 Min</md-option>
-                  <md-option value="60">1 Hr</md-option>
-                  <md-option value="75">1 Hr 15 Min</md-option>
-                  <md-option value="90">1 Hr 30 Min</md-option>
-                  <md-option value="105">1 Hr 45 Min</md-option>
-                  <md-option value="120">2 Hr</md-option>
+                <md-select v-model="event.duration" v-on:md-selected="calcCost">
+                  <md-option :value="15">15 Min</md-option>
+                  <md-option :value="30">30 Min</md-option>
+                  <md-option :value="45">45 Min</md-option>
+                  <md-option :value="60">1 Hr</md-option>
+                  <md-option :value="75">1 Hr 15 Min</md-option>
+                  <md-option :value="90">1 Hr 30 Min</md-option>
+                  <md-option :value="105">1 Hr 45 Min</md-option>
+                  <md-option :value="120">2 Hr</md-option>
                 </md-select>
               </md-field>
 
               <md-field>
                 <label>Priority</label>
                 <md-select v-model="event.priority">
-                  <md-option value="1">Normal</md-option>
-                  <md-option value="2">Important</md-option>
-                  <md-option value="3">Nuclear</md-option>
+                  <md-option :value="1">Normal</md-option>
+                  <md-option :value="2">Important</md-option>
+                  <md-option :value="3">Nuclear</md-option>
                 </md-select>
               </md-field>
 
@@ -65,6 +65,8 @@
                   :show-no-results="false"
                   placeholder="Add people to your meeting..."
                   :hide-selected="true"
+                  @select="addCost"
+                  @remove="removeCost"
                 >
                 </multiselect>
               </md-field>
@@ -84,8 +86,12 @@
             </slot>
           </div>
 
-          <md-progress-bar md-mode="buffer" :md-value="currentPercent" :md-buffer="maxPercent"></md-progress-bar>
+          <md-progress-bar md-mode="determinate" :md-value="currentPercent"></md-progress-bar>
+          <h6>
+            {{manHours}} Man Hours
+          </h6>
 
+  
           <div class="modal-footer">
             <slot name="footer">
               <md-button class="md-dense md-raised md-primary margin-reset" @click="close">
@@ -117,8 +123,9 @@ export default {
   data: () => ({
     maxPercent: 0,
     currentPercent: 0,
-    maxVal: 10,
     selectedPeople: [],
+    countSelected: 0,
+    manHours: 0,
     peopleOptions: ['Aleksiy', 'Winson', 'Shay', 'Ireti', 'Elaine'],
     event: {
       rangeEnd: "",
@@ -146,12 +153,19 @@ export default {
       this.$emit('close');
 
     },
-    calcPercent() {
-      this.currentPercent = peopleOptions.length / maxVal;
-      this.maxPercent = Math.max(this.currentPercent, this.maxPercent);
+    addCost() {
+      this.countSelected++;
+      this.calcCost();
     },
-    selectPerson(person) {
-      this.selectedPeople.push(person);
+    removeCost() {
+      this.countSelected--;
+      this.calcCost();
+
+    },
+    calcCost() {
+      this.manHours = Math.ceil(this.countSelected * this.event.duration / 60)
+      this.currentPercent = this.manHours / 12 * 100;
+    
     },
     addEvent() {
       store.commit('addEvent', this.event);
