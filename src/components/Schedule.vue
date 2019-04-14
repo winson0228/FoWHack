@@ -22,16 +22,17 @@
                     <md-button @click="optimize">Optimize</md-button>
                 </md-card-actions>
         </md-card>
-        <vue-cal 
-            :hide-view-selector="true"
-            :hide-weekends="true"
-            :editable-events="false"
-            :events="events"
-            :time-from="8 * 60"
-            :time-to="19*60"
-            style="height: 600px">
-        </vue-cal>
-       
+        <div class="schedule"> 
+            <vue-cal
+                :hide-view-selector="true"
+                :hide-weekends="true"
+                :editable-events="false"
+                :events="events"
+                :time-from="8 * 60"
+                :time-to="19*60"
+                style="height: 600px">
+            </vue-cal>
+        </div>
     </div>
 </template>
 
@@ -159,6 +160,10 @@ export default {
     padding-bottom: 24px;
 }
 
+.schedule {
+    margin-right: 16px;
+    margin-left: 16px;
+}
 
 .vuecal__cell.selected {
     z-index: 1;
