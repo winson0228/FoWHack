@@ -130,10 +130,13 @@ export default {
     event: {
       rangeEnd: "",
       rangeStart: "",
-      contention: "",
+      content: "",
       duration: 0,
       priority: 0,
       title: "",
+      // TODO: replace
+      start: "2019-04-16",
+      end: "2019-04-16"
     }
  }),
   methods: {
@@ -145,7 +148,7 @@ export default {
       this.event = {
         rangeEnd: "",
         rangeStart: "",
-        contention: "",
+        content: "",
         duration: 0,
         priority: 0,
         title: "",

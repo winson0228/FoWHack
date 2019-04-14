@@ -8,7 +8,7 @@
             <h2 name="header">Preferences</h2>
           </div>
           <div class="modal-body">
-            <md-tabs class="md-transparent" md-alignment="fixed">
+            <md-tabs class="md-transparent" md-alignment="left">
               <md-tab id="tab-home" md-label="1">
                 <div class="item-spacing">
                   <h4>Select your time zone and working hours.</h4>

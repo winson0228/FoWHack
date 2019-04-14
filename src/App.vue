@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <OnboardingModal 
       v-show="!isOnboarded"
       @close="onboardUser"/>
@@ -8,11 +8,12 @@
       v-show="isNewMeetingModalVisibile"
       @close="closeNewMeetingModal"
     />
-
-    <md-button class="align-right md-dense md-raised md-primary margin-reset"  @click="openNewMeetingModal">
+    <div>  
+      <Schedule/>
+    </div>
+    <md-button class="md-dense md-raised md-primary margin-reset"  @click="openNewMeetingModal">
       New Meeting
     </md-button>
-    <Schedule/>
   </div>
 </template>
 
@@ -52,7 +53,7 @@ export default {
 
 <style>
 .align-right {
-  text-align: right;
+  flex: 1 1 auto;
 }
 
 
@@ -63,5 +64,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  margin-right: 100px;
+  margin-left: 100px;
 }
 </style>
