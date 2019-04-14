@@ -6,27 +6,89 @@
 
           <div class="modal-header">
             <slot name="header">
-              default header
+              <h2>
+                Schedule a New Meeting
+              </h2>
             </slot>
           </div>
 
           <div class="modal-body">
             <slot name="body">
-              <multiselect 
-                v-model="selected" 
-                :options="options" 
-                @select="updateSelected"
+              <md-field>
+                <label>Title</label>
+                <md-input v-model="event.title"></md-input>
+              </md-field>
+
+              <md-field>
+                <label>Description</label>
+                <md-textarea v-model="event.content"></md-textarea>
+              </md-field>
+              
+              <md-field>
+                <label>Duration</label>
+                <md-select v-model="event.duration">
+                  <md-option value="15">15 Min</md-option>
+                  <md-option value="30">30 Min</md-option>
+                  <md-option value="45">45 Min</md-option>
+                  <md-option value="60">1 Hr</md-option>
+                  <md-option value="75">1 Hr 15 Min</md-option>
+                  <md-option value="90">1 Hr 30 Min</md-option>
+                  <md-option value="105">1 Hr 45 Min</md-option>
+                  <md-option value="120">2 Hr</md-option>
+                </md-select>
+              </md-field>
+
+              <md-field>
+                <label>Priority</label>
+                <md-select v-model="event.priority">
+                  <md-option value="1">Normal</md-option>
+                  <md-option value="2">Important</md-option>
+                  <md-option value="3">Nuclear</md-option>
+                </md-select>
+              </md-field>
+
+              <md-datepicker v-model="event.rangeStart">
+                <label>Schedule Range Start</label>
+              </md-datepicker>
+              <md-datepicker v-model="event.rangeEnd">
+                <label>Schedule Range End</label>
+              </md-datepicker>
+
+              <md-field>
+                <multiselect
+                  v-model="selectedPeople" 
+                  :options="peopleOptions" 
+                  :multiple="true"
+                  :searchable="true"
+                  :clear-on-select="true"
+                  :close-on-select="true"
+                  :show-no-results="false"
+                  placeholder="Add people to your meeting..."
+                  :hide-selected="true"
+                >
+                </multiselect>
+              </md-field>
+
+            <!-- <md-field>
+              <div>
+                <md-chips v-model="selectedPeople"></md-chips>
+              </div>
+              <md-autocomplete 
+                :md-options="peopleOptions"
+                v-on:md-selected="selectPerson"
               >
-              </multiselect>
+              <label>Add people to your meeting...</label>
+              </md-autocomplete>
+            </md-field> -->
+
             </slot>
           </div>
 
           <div class="modal-footer">
             <slot name="footer">
-              default footer
-              <button class="modal-default-button" @click="$emit('close')">
+              <md-button class="md-dense md-raised md-primary margin-reset" @click="save">
                 OK
-              </button>
+              </md-button>
             </slot>
           </div>
         </div>
@@ -38,6 +100,7 @@
 
 <script>
 import Multiselect from 'vue-multiselect'
+import store from '../store'
 
 export default {
   name: 'NewMeetingModal',
@@ -47,25 +110,49 @@ export default {
   props: {
   },
   data: () => ({
-    selected: null,
-    options: ['Aleksiy', 'Winson', 'Shay', 'Ireti', 'Elaine'],
-  }),
-  methods: {
-    close() {
-      this.$emit('close');
-    },
-    updateSelected (newSelected) {
-      this.selected = newSelected
+    selectedPeople: [],
+    peopleOptions: ['Aleksiy', 'Winson', 'Shay', 'Ireti', 'Elaine'],
+    event: {
+      rangeEnd: "",
+      rangeStart: "",
+      contention: "",
+      duration: 0,
+      priority: 0,
+      title: "",
     }
+ }),
+  methods: {
+    save() {
+      this.addEvent();
+      this.close();
+    },
+    close() {
+      this.event = {
+        rangeEnd: "",
+        rangeStart: "",
+        contention: "",
+        duration: 0,
+        priority: 0,
+        title: "",
+      };
+      this.$emit('close');
 
+    },
+    selectPerson(person) {
+      this.selectedPeople.push(person);
+    },
+    addEvent() {
+      store.commit('addEvent', this.event);
+    }
   }
 }
 </script>
 
 <style scoped>
+
 .modal-mask {
   position: fixed;
-  z-index: 9998;
+  z-index: 10;
   top: 0;
   left: 0;
   width: 100%;
@@ -81,7 +168,7 @@ export default {
 }
 
 .modal-container {
-  width: 300px;
+  width: 600px;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
@@ -89,6 +176,7 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
   font-family: Helvetica, Arial, sans-serif;
+  text-align: left !important;
 }
 
 .modal-header h3 {

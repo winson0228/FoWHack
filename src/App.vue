@@ -8,13 +8,10 @@
       v-show="isNewMeetingModalVisibile"
       @close="closeNewMeetingModal"
     />
-    <button
-      type="button"
-      class="btn"
-      @click="openNewMeetingModal"
-    >
-      Open Modal!
-    </button>
+
+    <md-button class="align-right md-dense md-raised md-primary margin-reset"  @click="openNewMeetingModal">
+      New Meeting
+    </md-button>
     <Schedule/>
   </div>
 </template>
@@ -51,7 +48,14 @@ export default {
 }
 </script>
 
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+
 <style>
+.align-right {
+  text-align: right;
+}
+
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
