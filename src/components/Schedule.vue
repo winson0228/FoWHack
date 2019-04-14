@@ -50,7 +50,6 @@ import "vue-cal/dist/vuecal.css";
 import store from "../store";
 import Moment from "moment";
 
-
 export default {
   name: "Schedule",
   components: {
@@ -108,6 +107,7 @@ export default {
   methods: {
     optimize() {
       console.log("optimize");
+      this.schedule(this.events);
       this.displayResults();
     },
     displayResults() {
@@ -170,7 +170,72 @@ export default {
 
       return results;
     },
-    schedule() {}
+    schedule(events) {
+      let bins = {};
+      events.forEach(event => {
+        let key = new Moment(event.start).format("YYYY-MM-DD");
+        if (event.rangeStart != "") {
+          let rangeStart = new Moment(event.rangeStart);
+          let rangeEnd = new Moment(event.rangeEnd);
+          let diff = Moment.duration(rangeEnd.diff(rangeStart)).asDays();
+          let random = Math.floor(Math.random() * (diff - 0 + 1));
+          key = rangeStart.add(random, "days").format("YYYY-MM-DD");
+        }
+
+        if (!(key in bins)) {
+          bins[key] = [
+            {
+              start: key + " 9:00",
+              end: key + " 9:00"
+            },
+            {
+              start: key + " 17:00",
+              end: key + " 17:00"
+            }
+          ];
+        }
+        bins[key].push(event);
+      });
+
+      let interval = 10;
+      for (let key of Object.keys(bins)) {
+          let preschedule = bins[key].filter(event => !event.rangeStart);
+          let schedule = bins[key].filter(event => !!event.rangeStart);
+
+        preschedule = preschedule.sort((a, b) => {
+          return (
+            new Moment(a.start).format("X") - new Moment(b.start).format("X")
+          );
+        });
+
+        let i = 0;
+        let j = 0;
+        let prevEnd = new Moment(preschedule[i].end);
+
+        while( i < preschedule.length && j < schedule.length) {
+            let preEvent = preschedule[i];
+            let event = schedule[j];
+            let preStartTime = new Moment(preEvent.start);
+            let startTime = prevEnd.clone().add(interval, "minutes");
+            console.log(event.duration);
+            let endTime = startTime.clone().add(event.duration, "minutes");
+            console.log(startTime.format("YYYY-MM-DD HH:mm"));
+            console.log(endTime.format("YYYY-MM-DD HH:mm"));
+
+            if (endTime.isBefore(preStartTime)) {
+                event.start = startTime.format("YYYY-MM-DD HH:mm");
+                event.end = endTime.format("YYYY-MM-DD HH:mm");
+                prevEnd = endTime.clone();
+                j += 1;
+            } else {
+                prevEnd = new Moment(preschedule[i].end);
+                i += 1;
+            }
+        }
+      }
+      console.log(events);
+      return events;
+    }
   }
 };
 </script>
@@ -191,11 +256,11 @@ export default {
 }
 
 .md-progress-bar.md-theme-default.md-determinate.md-warn {
-    background-color: rgba(244,194,13,0.38)   
+  background-color: rgba(244, 194, 13, 0.38);
 }
 
 .md-progress-bar.md-theme-default.md-determinate.md-warn .md-progress-bar-fill {
-    background-color: #f4c20d
+  background-color: #f4c20d;
 }
 
 .vuecal__cell.selected {
