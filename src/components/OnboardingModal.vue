@@ -1,3 +1,4 @@
+<script src="//unpkg.com/element-ui@2.7.2/lib/index.js"></script>
 <template>
   <transition name="modal">
     <div class="modal-mask">
@@ -10,41 +11,43 @@
             <md-tabs class="md-transparent" md-alignment="fixed">
               <md-tab id="tab-home" md-label="1">
                 <div class="item-spacing">
-                  Select your time zone and working hours.
-                  <md-field>
-                    <label>Select your day...</label>
-                    <md-select v-model="onboardAvoidDay">
-                      <md-option value="1">Monday</md-option>
-                      <md-option value="2">Tuesday</md-option>
-                      <md-option value="3">Wednesday</md-option>
-                      <md-option value="4">Thursday</md-option>
-                      <md-option value="5">Friday</md-option>
-                      <md-option value="6">Saturday</md-option>
-                      <md-option value="7">Sunday</md-option>
-                    </md-select>
-                  </md-field>
+                  <h4>Select your time zone and working hours.</h4>
+                  <el-time-select
+    placeholder="Start time"
+    v-model="startTime"
+    :picker-options="{
+      step: '00:15'
+    }">
+  </el-time-select>
+  <el-time-select
+    placeholder="End time"
+    v-model="endTime"
+    :picker-options="{
+      start: '08:30',
+      step: '00:15',
+      end: '18:30',
+      minTime: startTime
+    }">
+  </el-time-select>
                 </div>
               </md-tab>
               <md-tab id="tab-pages" md-label="2">
                 <div class="item-spacing">
-                  Would you like your meetings to be clustered together or buffered?
+                  <h4>Would you like your meetings to be clustered together or buffered?</h4>
                   <md-radio v-model="radio" name="onboardPrefClustered" value="clustered">Clustered</md-radio>
                   <md-radio v-model="radio" name="onboardPrefBuffered" value="buffered">Buffered</md-radio>
                   <div v-if="radio === 'buffered'">
                     <md-field>
                       <label>Minute Intervals</label>
                       <md-select v-model="bufferedIntervals">
-                        <md-option value="5">15 minutes</md-option>
-                        <md-option value="10">Tuesday</md-option>
-                        <md-option value="15">Wednesday</md-option>
-                        <md-option value="20">Thursday</md-option>
-                        <md-option value="25">Friday</md-option>
-                        <md-option value="30">Saturday</md-option>
-                        <md-option value="35">Sunday</md-option>
-                        <md-option value="40">Sunday</md-option>
-                        <md-option value="45">Sunday</md-option>
-                        <md-option value="50">Sunday</md-option>
-                        <md-option value="55">Sunday</md-option>
+                        <md-option value="15">15 Min</md-option>
+                        <md-option value="30">30 Min</md-option>
+                        <md-option value="45">45 Min</md-option>
+                        <md-option value="60">1 Hr</md-option>
+                        <md-option value="75">1 Hr 15 Min</md-option>
+                        <md-option value="90">1 Hr 30 Min</md-option>
+                        <md-option value="105">1 Hr 45 Min</md-option>
+                        <md-option value="120">2 Hr</md-option>
                       </md-select>
                     </md-field>
                   </div>
@@ -52,7 +55,7 @@
               </md-tab>
               <md-tab id="tab-posts" md-label="3">
                 <div class="item-spacing">
-                  What would be the day(s) that you would want to avoid having meetings?
+                  <h4>What would be the day(s) that you would want to avoid having meetings?</h4>
                   <md-field>
                     <label>Select your day...</label>
                     <md-select v-model="onboardAvoidDay">
@@ -69,7 +72,7 @@
               </md-tab>
               <md-tab id="tab-favorites" md-label="4">
                 <div class="item-spacing">
-                  What would be the day(s) that you are most likely available for meetings?
+                  <h4>What would be the day(s) that you are most likely available for meetings?</h4>
                   <md-field>
                     <label>Select your day...</label>
                     <md-select v-model="onboardPreferredDay">
@@ -84,9 +87,9 @@
                   </md-field>
                 </div>
               </md-tab>
-              <md-tab id="tab-favorites" md-label="5">
+              <md-tab id="tab-favorites2" md-label="5">
                 <div class="item-spacing" required>
-                  Do you prefer your meetings in the morning or afternoon?
+                  <h4>Do you prefer your meetings in the morning or afternoon?</h4>
                   <md-radio
                     v-model="radio"
                     name="onboardPrefMorningAfternoon"
@@ -113,6 +116,10 @@
 
 
 <script>
+import Vue from "vue";
+import elementUI from "element-ui";
+Vue.use(elementUI);
+
 export default {
   name: "Modal",
   props: {},
@@ -122,7 +129,9 @@ export default {
     }
   },
   data: () => ({
-    radio: false
+    radio: false,
+    startTime: "",
+    value1: ""
   }),
   computed: {
     onboardAvoidDay: {
@@ -154,6 +163,8 @@ export default {
 </script>
 
 <style scoped>
+@import url("//unpkg.com/element-ui@2.7.2/lib/theme-chalk/index.css");
+
 .modal-mask {
   position: fixed;
   z-index: 10;
