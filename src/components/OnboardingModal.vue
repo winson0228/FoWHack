@@ -8,38 +8,47 @@
             <h2 name="header">Preferences</h2>
           </div>
           <div class="modal-body">
-            <md-tabs class="md-transparent" md-alignment="left">
-              <md-tab id="tab-home" md-label="1">
+            <md-steppers v-if="!completedPreferences" :md-active-step.sync="active" md-linear>
+              <md-step id="first" :md-done.sync="first">
                 <div class="item-spacing">
-                  <h4>Select your time zone and working hours.</h4>
-                  <el-time-select
-    placeholder="Start time"
-    v-model="startTime"
-    :picker-options="{
-      step: '00:15'
-    }">
-  </el-time-select>
-  <el-time-select
-    placeholder="End time"
-    v-model="endTime"
-    :picker-options="{
-      start: '08:30',
-      step: '00:15',
-      end: '18:30',
-      minTime: startTime
-    }">
-  </el-time-select>
+                  Let’s get you set up.
+                  <p>We’ll ask for some quick questions so we can ensure we are scheduling meetings at a time that makes you the most productive you can be.</p>
                 </div>
-              </md-tab>
-              <md-tab id="tab-pages" md-label="2">
+                <md-button class="md-raised md-primary" @click="setDone('first', 'second')">Continue</md-button>
+              </md-step>
+              <md-step id="second" :md-done.sync="second">
                 <div class="item-spacing">
-                  <h4>Would you like your meetings to be clustered together or buffered?</h4>
+                  <h4>What are your core working hours?</h4>
+                  <el-time-select
+                    placeholder="Start time"
+                    v-model="startTime"
+                    :picker-options="{
+      step: '00:15'
+    }"
+                  ></el-time-select>
+                  <el-time-select
+                    placeholder="End time"
+                    v-model="endTime"
+                    :picker-options="{
+      step: '00:15',
+      minTime: startTime
+    }"
+                  ></el-time-select>
+                                    We’ll avoid scheduling meetings outside of these hours altogether.
+
+                </div>
+                <md-button class="md-raised md-primary" @click="setDone('second', 'third')">Continue</md-button>
+              </md-step>
+              <md-step id="third" :md-done.sync="third">
+                <div class="item-spacing">
+                  <h4>Do you prefer to cluster your meetings together, or spread them out over the week?</h4>
                   <md-radio v-model="radio" name="onboardPrefClustered" value="clustered">Clustered</md-radio>
                   <md-radio v-model="radio" name="onboardPrefBuffered" value="buffered">Buffered</md-radio>
                   <div v-if="radio === 'buffered'">
                     <md-field>
                       <label>Minute Intervals</label>
                       <md-select v-model="bufferedIntervals">
+                        How would you like to space out between your meetings? 
                         <md-option value="15">15 Min</md-option>
                         <md-option value="30">30 Min</md-option>
                         <md-option value="45">45 Min</md-option>
@@ -52,13 +61,14 @@
                     </md-field>
                   </div>
                 </div>
-              </md-tab>
-              <md-tab id="tab-posts" md-label="3">
+                <md-button class="md-raised md-primary" @click="setDone('third', 'forth')">Continue</md-button>
+              </md-step>
+              <md-step id="forth" :md-done.sync="forth">
                 <div class="item-spacing">
-                  <h4>What would be the day(s) that you would want to avoid having meetings?</h4>
+                  <h4>What days of the week are you most available for meetings?</h4>
                   <md-field>
                     <label>Select your day...</label>
-                    <md-select v-model="onboardAvoidDay">
+                    <md-select v-model="selectedPreferredDay" multiple>
                       <md-option value="1">Monday</md-option>
                       <md-option value="2">Tuesday</md-option>
                       <md-option value="3">Wednesday</md-option>
@@ -67,15 +77,17 @@
                       <md-option value="6">Saturday</md-option>
                       <md-option value="7">Sunday</md-option>
                     </md-select>
+                    We’ll try our best to schedule  meetings in these days for you. 
                   </md-field>
                 </div>
-              </md-tab>
-              <md-tab id="tab-favorites" md-label="4">
+                <md-button class="md-raised md-primary" @click="setDone('forth', 'fifth')">Continue</md-button>
+              </md-step>
+              <md-step id="fifth" :md-done.sync="fifth">
                 <div class="item-spacing">
-                  <h4>What would be the day(s) that you are most likely available for meetings?</h4>
+                  <h4>What days are you the least available for meetings?</h4>
                   <md-field>
                     <label>Select your day...</label>
-                    <md-select v-model="onboardPreferredDay">
+                    <md-select v-model="selectedAvoidDay" multiple>
                       <md-option value="1">Monday</md-option>
                       <md-option value="2">Tuesday</md-option>
                       <md-option value="3">Wednesday</md-option>
@@ -84,12 +96,14 @@
                       <md-option value="6">Saturday</md-option>
                       <md-option value="7">Sunday</md-option>
                     </md-select>
+                    We’ll try our best to avoid scheduling meetings in these days for you.
                   </md-field>
                 </div>
-              </md-tab>
-              <md-tab id="tab-favorites2" md-label="5">
+                <md-button class="md-raised md-primary" @click="setDone('fifth', 'sixth')">Continue</md-button>
+              </md-step>
+              <md-step id="sixth" :md-done.sync="sixth">
                 <div class="item-spacing" required>
-                  <h4>Do you prefer your meetings in the morning or afternoon?</h4>
+                  <h4>Do you have a preference if your meetings are in the morning, or afternoon?</h4>
                   <md-radio
                     v-model="radio"
                     name="onboardPrefMorningAfternoon"
@@ -101,11 +115,11 @@
                     value="afternoon"
                   >Afternoon</md-radio>
                 </div>
-              </md-tab>
-            </md-tabs>
+                <md-button class="md-raised md-primary" @click="setComplete()">Done</md-button>
+              </md-step>
+            </md-steppers>
           </div>
-
-          <div class="modal-footer">
+          <div v-if="completedPreferences" class="modal-footer">
             <md-button class="md-dense md-raised md-primary margin-reset" @click="$emit('close')">OK</md-button>
           </div>
         </div>
@@ -126,12 +140,41 @@ export default {
   methods: {
     close() {
       this.$emit("close");
+    },
+    setDone(id, index) {
+      this[id] = true;
+      
+      if (index) {
+        this.active = index;
+      }
+    },
+    setComplete() {
+      this.completedPreferences = true;
     }
   },
   data: () => ({
     radio: false,
     startTime: "",
-    value1: ""
+    endTime: "",
+    selectedPreferredDay: [],
+    selectedAvoidDay: [],
+    dayOptions: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    active: "first",
+    completedPreferences: false,
+    first: false,
+    second: false,
+    third: false,
+    forth: false,
+    fifth: false,
+    sixth: false
   }),
   computed: {
     onboardAvoidDay: {
@@ -183,7 +226,7 @@ export default {
 }
 
 .modal-container {
-  width: 500px;
+  width: 560px;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
