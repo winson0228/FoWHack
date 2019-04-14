@@ -15,13 +15,13 @@
           <div class="modal-body">
             <slot name="body">
               <md-field>
-                <label>Name</label>
-                <md-input v-model="name"></md-input>
+                <label>Title</label>
+                <md-input v-model="title"></md-input>
               </md-field>
 
               <md-field>
                 <label>Description</label>
-                <md-textarea v-model="description"></md-textarea>
+                <md-textarea v-model="content"></md-textarea>
               </md-field>
               
               <md-field>
@@ -86,10 +86,9 @@
 
           <div class="modal-footer">
             <slot name="footer">
-              default footer
-              <button class="modal-default-button" @click="$emit('close')">
+              <md-button class="md-dense md-raised md-primary margin-reset" @click="$emit('close')">
                 OK
-              </button>
+              </md-button>
             </slot>
           </div>
         </div>
@@ -101,6 +100,7 @@
 
 <script>
 import Multiselect from 'vue-multiselect'
+import store from '../store.js'
 
 export default {
   name: 'NewMeetingModal',
@@ -112,13 +112,14 @@ export default {
   data: () => ({
     selectedPeople: [],
     peopleOptions: ['Aleksiy', 'Winson', 'Shay', 'Ireti', 'Elaine'],
-    rangeEnd: "", 
-    rangeStart: "",
-    description: "",
-    duration: 0,
-    priority: 0,
-    name: "",
-
+    event = {
+      rangeEnd: "",
+      rangeStart: "",
+      contention: "",
+      duration: 0,
+      priority: 0,
+      title: "",
+    }
  }),
   methods: {
     close() {
@@ -126,6 +127,9 @@ export default {
     },
     selectPerson(person) {
       this.selectedPeople.push(person);
+    },
+    addEvent() {
+      // this.store = 
     }
   }
 }
@@ -135,7 +139,7 @@ export default {
 
 .modal-mask {
   position: fixed;
-  z-index: 2;
+  z-index: 10;
   top: 0;
   left: 0;
   width: 100%;
