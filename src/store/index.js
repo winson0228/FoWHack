@@ -230,28 +230,6 @@ export default new Vuex.Store({
         {
           content: "",
           duration: 30,
-          end: "2019-04-09 9:30",
-          priority: 0,
-          rangeEnd: "2019-04-09",
-          rangeStart: "2019-04-09",
-          start: "2019-04-09 9:00",
-          title: "Marketplace Daily",
-          class: "sport"
-        },
-        {
-          content: "",
-          duration: 30,
-          end: "2019-04-11 16:30",
-          priority: 0,
-          rangeEnd: "2019-04-08",
-          rangeStart: "2019-04-12",
-          start: "2019-04-11 15:30",
-          title: "ML Talent Weekly",
-          class: "sport"
-        },
-        {
-          content: "",
-          duration: 30,
           end: "2019-04-11 16:30",
           priority: 0,
           rangeEnd: "2019-04-08",
