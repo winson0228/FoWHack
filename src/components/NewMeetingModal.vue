@@ -84,8 +84,13 @@
             </slot>
           </div>
 
+          <md-progress-bar md-mode="buffer" :md-value="currentPercent" :md-buffer="maxPercent"></md-progress-bar>
+
           <div class="modal-footer">
             <slot name="footer">
+              <md-button class="md-dense md-raised md-primary margin-reset" @click="close">
+                Cancel
+              </md-button>
               <md-button class="md-dense md-raised md-primary margin-reset" @click="save">
                 OK
               </md-button>
@@ -110,6 +115,9 @@ export default {
   props: {
   },
   data: () => ({
+    maxPercent: 0,
+    currentPercent: 0,
+    maxVal: 10,
     selectedPeople: [],
     peopleOptions: ['Aleksiy', 'Winson', 'Shay', 'Ireti', 'Elaine'],
     event: {
@@ -137,6 +145,10 @@ export default {
       };
       this.$emit('close');
 
+    },
+    calcPercent() {
+      this.currentPercent = peopleOptions.length / maxVal;
+      this.maxPercent = Math.max(this.currentPercent, this.maxPercent);
     },
     selectPerson(person) {
       this.selectedPeople.push(person);
